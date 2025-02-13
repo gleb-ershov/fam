@@ -1,26 +1,36 @@
-const POST_TYPES = {
-	PostService: Symbol.for("PostService"),
-	PostRepository: Symbol.for("PostRepository"),
-	CreatePostUseCase: Symbol.for("CreatePostUseCase"),
-	GetPostByIdUseCase: Symbol.for("GetPostByIdUseCase"),
-	UpdatePostUseCase: Symbol.for("UpdatePostUseCase"),
-	DeletePostUseCase: Symbol.for("DeletePostUseCase"),
-	PostController: Symbol.for("PostController"),
-};
+function setSymbols(keys: string[]) {
+	const serviceContainer = {} as Record<string, symbol>;
+	keys.forEach((key) => {
+		serviceContainer[key] = Symbol.for(key);
+	});
+	return serviceContainer;
+}
 
-const USER_TYPES = {
-	UserRepository: Symbol.for("UserRepository"),
+const POST_TYPES_KEYS = [
+	"PostService",
+	"PostRepository",
+	"CreatePostUseCase",
+	"GetPostByIdUseCase",
+	"UpdatePostUseCase",
+	"DeletePostUseCase",
+	"PostController",
+];
 
-	CreateUserUseCase: Symbol.for("CreateUserUseCase"),
-	UpdateUserUseCase: Symbol.for("UpdateUserUseCase"),
-	GetUserByIdUseCase: Symbol.for("GetUserByIdUseCase"),
-	GetUserByUsernameUseCase: Symbol.for("GetUserByUsernameUseCase"),
-	SoftDeleteUserUseCase: Symbol.for("SoftDeleteUserUseCase"),
-	HardDeleteUserUseCase: Symbol.for("HardDeleteUserUseCase"),
+const POST_TYPES = setSymbols(POST_TYPES_KEYS);
 
-	UserService: Symbol.for("UserService"),
-	UserController: Symbol.for("UserController"),
-};
+const USER_TYPES_KEYS = [
+	"UserRepository",
+	"CreateUserUseCase",
+	"UpdateUserUseCase",
+	"GetUserByIdUseCase",
+	"GetUserByUsernameUseCase",
+	"SoftDeleteUserUseCase",
+	"HardDeleteUserUseCase",
+	"UserService",
+	"UserController",
+];
+
+const USER_TYPES = setSymbols(USER_TYPES_KEYS);
 
 export const CONTAINER_TYPES = {
 	// Utilities
