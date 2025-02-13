@@ -10,6 +10,7 @@ import {
 	HTTP_STATUS_OK,
 } from "../../../../shared/consts/http-status";
 import { EntityID } from "../../../../shared/value-objects/EntityID";
+import { UserMapper } from "../../infrastructure/mappers/UserMapper";
 
 export interface IUserController {
 	createUser: (req: Request, res: Response) => Promise<void>;
@@ -27,9 +28,9 @@ export class UserController implements IUserController {
 
 	async createUser(req: Request, res: Response): Promise<void> {
 		try {
-			const userData: UserDTO = req.body;
+			const userData: UserDTO & { hashedPassword: string } = req.body;
 			const user = await this.userService.createUser(userData);
-			res.status(HTTP_STATUS_CREATED.code).json(user);
+			res.status(HTTP_STATUS_CREATED.code).json(UserMapper.toDTO(user));
 		} catch (error) {
 			res.status(HTTP_STATUS_BAD_REQUEST.code).json({
 				message: HTTP_STATUS_BAD_REQUEST.message,
@@ -42,7 +43,7 @@ export class UserController implements IUserController {
 			const { id } = req.params;
 			const _entityID = new EntityID(id);
 			const user = await this.userService.getUserById(_entityID);
-			res.status(HTTP_STATUS_OK.code).json(user);
+			res.status(HTTP_STATUS_OK.code).json(UserMapper.toDTO(user));
 		} catch (error) {
 			res.status(HTTP_STATUS_NOT_FOUND.code).json({
 				message: HTTP_STATUS_NOT_FOUND.message,
@@ -54,11 +55,11 @@ export class UserController implements IUserController {
 		try {
 			const { username } = req.params;
 			const user = await this.userService.getUserByUsername(username);
-			res.status(HTTP_STATUS_OK.code).json(user);
+			res.status(HTTP_STATUS_OK.code).json(UserMapper.toDTO(user));
 		} catch (error) {
-			res
-				.status(HTTP_STATUS_NOT_FOUND.code)
-				.json({ message: HTTP_STATUS_NOT_FOUND.message });
+			res.status(HTTP_STATUS_NOT_FOUND.code).json({
+				message: HTTP_STATUS_NOT_FOUND.message,
+			});
 		}
 	}
 
@@ -67,11 +68,11 @@ export class UserController implements IUserController {
 			const { id } = req.params;
 			const _entityID = new EntityID(id);
 			const user = await this.userService.softDeleteUser(_entityID);
-			res.status(200).json(user);
+			res.status(200).json(UserMapper.toDTO(user));
 		} catch (error) {
-			res
-				.status(HTTP_STATUS_BAD_REQUEST.code)
-				.json({ message: HTTP_STATUS_BAD_REQUEST.message });
+			res.status(HTTP_STATUS_BAD_REQUEST.code).json({
+				message: HTTP_STATUS_BAD_REQUEST.message,
+			});
 		}
 	}
 
@@ -82,9 +83,9 @@ export class UserController implements IUserController {
 			await this.userService.hardDeleteUser(_entityID);
 			res.status(204).send();
 		} catch (error) {
-			res
-				.status(HTTP_STATUS_BAD_REQUEST.code)
-				.json({ message: HTTP_STATUS_BAD_REQUEST.message });
+			res.status(HTTP_STATUS_BAD_REQUEST.code).json({
+				message: HTTP_STATUS_BAD_REQUEST.message,
+			});
 		}
 	}
 }
