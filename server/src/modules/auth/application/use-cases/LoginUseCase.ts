@@ -24,7 +24,6 @@ export class LoginUserUseCase {
 
 		const existingUserHash = existingUser.getHashedPassword();
 
-		//COMPARE PASSWORD VIA HASH SERVICE
 		const comparePasswordsResult =
 			await this.hashingService.comparePasswords(
 				data.password,

@@ -6,17 +6,19 @@ import { IPostService } from "../../application/services/PostService";
 import { CreatePostDTO } from "../../application/dtos/CreatePostDTO";
 import { UpdatePostDTO } from "../../application/dtos/UpdatePostDTO";
 import { PostMapper } from "../mappers/PostMapper";
+import { GraphQLContext } from "../../../../graphql/GraphQLContext";
 
 export const postResolvers = {
 	Query: {
 		getPostById: async (
 			_: any,
 			{ id }: { id: string },
-			{ postService }: { postService: IPostService },
+			{ container }: GraphQLContext,
 			info: GraphQLResolveInfo
 		) => {
 			const entityID = new EntityID(id);
 			const fields = getSelectedFields<PostDTO>(info);
+			const postService = container.get<IPostService>("PostService");
 			const post = await postService.getPostById(entityID, fields);
 			return PostMapper.toDTO(post);
 		},
@@ -25,25 +27,28 @@ export const postResolvers = {
 		deletePost: async (
 			_: any,
 			{ id }: { id: string },
-			{ postService }: { postService: IPostService }
+			{ container }: GraphQLContext
 		) => {
 			const entityID = new EntityID(id);
+			const postService = container.get<IPostService>("PostService");
 			return await postService.deletePost(entityID);
 		},
 		createPost: async (
 			_: any,
 			{ data }: { data: CreatePostDTO },
-			{ postService }: { postService: IPostService }
+			{ container }: GraphQLContext
 		) => {
+			const postService = container.get<IPostService>("PostService");
 			const newPost = await postService.createPost(data);
 			return PostMapper.toDTO(newPost);
 		},
 		updatePost: async (
 			_: any,
 			{ id, data }: { id: string; data: UpdatePostDTO },
-			{ postService }: { postService: IPostService }
+			{ container }: GraphQLContext
 		) => {
 			const entityID = new EntityID(id);
+			const postService = container.get<IPostService>("PostService");
 			const newPost = await postService.updatePost(entityID, data);
 			return PostMapper.toDTO(newPost);
 		},

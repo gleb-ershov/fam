@@ -1,13 +1,9 @@
 import { globalTypeDefs } from "./globalTypeDefs";
-import { globalResolvers } from "./globalResolvers";
 import { ApolloServer } from "@apollo/server";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import http from "http";
-import { app } from "..";
+import { GraphQLContext } from "./GraphQLContext";
+import { globalResolvers } from "./globalResolvers";
 
-const httpServer = http.createServer(app);
-export const server = new ApolloServer({
+export const server = new ApolloServer<GraphQLContext>({
 	typeDefs: globalTypeDefs,
 	resolvers: globalResolvers,
-	plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
